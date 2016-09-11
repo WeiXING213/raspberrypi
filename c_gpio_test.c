@@ -1,5 +1,5 @@
 /*
-gcc c_gpio_test.c blink -l wirlingPi
+gcc c_gpio_test.c -o blink -l wirlingPi
 */
 #include <stdio.h>
 #include <wiringPi.h>
