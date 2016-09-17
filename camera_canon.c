@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <time.h>
 #include <gphoto2/gphoto2-camera.h>
+#include <string.h>
 
 Camera *camera;
 GPContext *context;
@@ -74,17 +75,35 @@ int capture (const char *filename) {
  printf("Wait for events from camera\n");
  while(1) {
   retval = gp_camera_wait_for_event(camera, waittime, &type, &data, context);
+   
   if(type == GP_EVENT_TIMEOUT) {
    break;
   }
   else if (type == GP_EVENT_CAPTURE_COMPLETE) {
-   printf("Capture completed\n");
+   printf("Capture completed.\n");
    waittime = 100*60;
   }
   else if (type != GP_EVENT_UNKNOWN) {
    printf("Unexpected event received from camera: %d\n", (int)type);
   }
  }
+ //send image 
+ char strDest[256];
+ strcpy(strDest, "mutt -a ");
+ strcat(strDest, filename);
+ strcat(strDest, " -s 'Photo camera' -- xingsir@gmail.com -- 598858652@qq.com < mail_content\n");
+ 
+if(system(strDest) != 0){
+  printf("mutt sending erro\n");
+  exit(3);
+ }
+ //delete local image
+ if(remove(filename) == 0)
+  printf("Removed %s\n.", filename);
+ else
+  perror("remove issue");
+ 
+ 
  return 0;
 }
 
@@ -116,14 +135,16 @@ int main (int argc, char *argv[]) {
   time_t now;
   time(&now);
   
+  
   snprintf(filename, 256, "canon_%d.jpg", now);
   printf("Capturing to file %s\n", filename);
   capture(filename);
  }
 
- // close camera
- gp_camera_unref(camera);
- gp_context_unref(context);
+ //close camera
+ //gp_camera_unref(camera);
+ //gp_context_unref(context);
+
 
  return 0;
 }
