@@ -126,3 +126,11 @@ print "-------------------------------------------------------------------------
 init_servo()
 while True:
     key_input(readchar.readkey())
+
+"""
+video streaming 
+
+recevier : gst-launch-1.0 -v udpsrc port=9000 caps='application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264' ! rtph264depay ! video/x-h264,width=640,height=480,framerate=30/1 ! h264parse ! avdec_h264 ! videoconvert ! autovideosink sync=false
+
+sender: pi@raspberrypi:~ $ raspivid -n -w 640 -h 480 -t 0 -o - | gst-launch-1.0 -v fdsrc ! h264parse ! rtph264pay config-interval=10 pt=96 ! udpsink host=192.168.0.11 port=9000
+"""
