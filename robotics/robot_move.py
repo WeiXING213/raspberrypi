@@ -3,13 +3,19 @@ import time
 import sys
 import readchar
 
+pwm2 = 0
 def init():
     gpio.setmode(gpio.BOARD)
+    gpio.setup(12, gpio.OUT)
+    global pwm2
+    pwm2 = gpio.PWM(12, 50)
+    pwm2.start(5)
+    """
     gpio.setup(7, gpio.OUT)
     gpio.setup(11, gpio.OUT)
     gpio.setup(13, gpio.OUT)
     gpio.setup(15, gpio.OUT)
-
+    """
 def forward(tf):
     gpio.output(7, False)
     gpio.output(11, True)
@@ -58,11 +64,16 @@ def pivot_right(tf):
     time.sleep(tf)
     gpio.cleanup()
 
+def change_duty(pwm, angle):
+    duty = float(angle)/(180/(12.5-2.5)) + 2.5
+    print ("angle = %s, duty cycle = %s"%(angle, duty))
+    """ pwm.ChangeDutyCycle(duty) """
+    pwm.ChangeDutyCycle(duty)
 
 def key_input(key_press):
     init()
-    print 'Key:', key_press
-    sleep_time = 0.030
+    sleep_time = 0.2
+    global pwm2
     
     if key_press.lower() == 'z':
         forward(sleep_time)
@@ -76,10 +87,20 @@ def key_input(key_press):
         pivot_left(sleep_time)
     elif key_press.lower() == 'e':
         pivot_right(sleep_time)
+   
+    elif key_press.lower() == 'i':
+        change_duty(pwm2, 30)
+        #pwm2.ChangeDutyCycle(7.5)
+
+    elif key_press.lower() == 'k':
+        change_duty(pwm2, 100)
+        #pwm2.ChangeDutyCycle(5)
+
+
     elif key_press.lower() == 'p':
-        gpio.clean()
+        gpio.cleanup()
         sys.exit(0);
-        
 
 while True:
-    key_input(repr(readchar.readkey()))
+    init()
+    key_input(readchar.readkey())
