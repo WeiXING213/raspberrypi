@@ -4,12 +4,18 @@ import sys
 import readchar
 
 pwm2 = 0
+pwm2_value = 50
+def init_servo():
+   global pwm2
+   global pwm2_value
+
+   gpio.setmode(gpio.BOARD)
+   gpio.setup(12, gpio.OUT)
+   pwm2 = gpio.PWM(12, pwm2_value)
+   pwm2.start(5)
+
 def init():
     gpio.setmode(gpio.BOARD)
-    gpio.setup(12, gpio.OUT)
-    global pwm2
-    pwm2 = gpio.PWM(12, 50)
-    pwm2.start(5)
     """
     gpio.setup(7, gpio.OUT)
     gpio.setup(11, gpio.OUT)
@@ -65,6 +71,7 @@ def pivot_right(tf):
     gpio.cleanup()
 
 def change_duty(pwm, angle):
+    time.sleep(1)
     duty = float(angle)/(180/(12.5-2.5)) + 2.5
     print ("angle = %s, duty cycle = %s"%(angle, duty))
     """ pwm.ChangeDutyCycle(duty) """
@@ -74,7 +81,8 @@ def key_input(key_press):
     init()
     sleep_time = 0.2
     global pwm2
-    
+    global pwm2_value
+
     if key_press.lower() == 'z':
         forward(sleep_time)
     elif key_press.lower() == 's':
@@ -89,18 +97,19 @@ def key_input(key_press):
         pivot_right(sleep_time)
    
     elif key_press.lower() == 'i':
-        change_duty(pwm2, 30)
-        #pwm2.ChangeDutyCycle(7.5)
+        pwm2_value -= 5
+        change_duty(pwm2, pwm2_value)#up --
 
     elif key_press.lower() == 'k':
-        change_duty(pwm2, 100)
-        #pwm2.ChangeDutyCycle(5)
-
+        pwm2_value += 5
+        change_duty(pwm2, pwm2_value) #down ++
 
     elif key_press.lower() == 'p':
         gpio.cleanup()
+        pwm2.stop()
         sys.exit(0);
 
+init_servo()
 while True:
     init()
     key_input(readchar.readkey())
