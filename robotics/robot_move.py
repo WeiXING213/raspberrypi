@@ -83,25 +83,26 @@ def change_duty(pwm, angle):
 
 def key_input(key_press):
     sleep_time = 0.2
+    walking_time = 0.8
     global pwm
     global pwm_value
 
     if key_press.lower() == 'z':
         init()
-        forward(sleep_time)
+        forward(walking_time)
     elif key_press.lower() == 's':
         init()
-        reverse(sleep_time)
-    elif key_press.lower() == 'q':
-        init()
-        turn_left(sleep_time)
+        reverse(walking_time)
     elif key_press.lower() == 'd':
         init()
+        turn_left(sleep_time)
+    elif key_press.lower() == 'q':
+        init()
         turn_right(sleep_time)
-    elif key_press.lower() == 'a':
+    elif key_press.lower() == 'e':
         init()
         pivot_left(sleep_time)
-    elif key_press.lower() == 'e':
+    elif key_press.lower() == 'a':
         init()
         pivot_right(sleep_time)
     #--servo--
