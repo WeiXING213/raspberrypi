@@ -71,7 +71,7 @@ def pivot_right(tf):
     gpio.cleanup()
 
 def change_duty(pwm, angle):
-    time.sleep(1)
+    #time.sleep(1)
     duty = float(angle)/(180/(12.5-2.5)) + 2.5
     print ("angle = %s, duty cycle = %s"%(angle, duty))
     """ pwm.ChangeDutyCycle(duty) """
@@ -95,19 +95,22 @@ def key_input(key_press):
         pivot_left(sleep_time)
     elif key_press.lower() == 'e':
         pivot_right(sleep_time)
-   
     elif key_press.lower() == 'i':
         pwm2_value -= 5
-        change_duty(pwm2, pwm2_value)#up --
-
+        change_duty(pwm2, pwm2_value)
     elif key_press.lower() == 'k':
         pwm2_value += 5
-        change_duty(pwm2, pwm2_value) #down ++
-
+        change_duty(pwm2, pwm2_value)
     elif key_press.lower() == 'p':
         gpio.cleanup()
         pwm2.stop()
         sys.exit(0);
+print "-------------------------------------------------------------------------------------------------------------------"
+print "car : z - forward | s - reverse | q - turn left | d - turn right | a - turn left | e - pivot right | i - pivot left"
+print "camera : i - look up | k - look down | o - look left | m - look right"
+print "\np - exit"
+print "-------------------------------------------------------------------------------------------------------------------"
+
 
 init_servo()
 while True:
