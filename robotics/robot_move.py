@@ -5,19 +5,31 @@ import readchar
 
 pwm_value = 90
 pwm = 0
+
+pwm_b_value = 90
+pwm_b = 0 
+
 def init_servo():
    global pwm_value
    global pwm
+   global pwm_b
+   global pwm_b_value
+
    gpio.setmode(gpio.BOARD)
    gpio.setup(12, gpio.OUT)
    pwm = gpio.PWM(12, 50)
    
+   gpio.setup(16, gpio.OUT)
+   pwm_b = gpio.PWM(16, 50)
+
    duty = float(pwm_value)/(180/(12.5-2.5)) + 2.5
    pwm.start(duty)
+   pwm_b.start(duty)
 
 def active_servo():
-   gpio.setmode(gpio.BOARD)
-   gpio.setup(12, gpio.OUT)
+    gpio.setmode(gpio.BOARD)
+    gpio.setup(12, gpio.OUT)
+    gpio.setup(16, gpio.OUT)
  
 def init():
     gpio.setmode(gpio.BOARD)
@@ -82,10 +94,12 @@ def change_duty(pwm, angle):
     pwm.ChangeDutyCycle(duty)
 
 def key_input(key_press):
-    sleep_time = 0.2
+    sleep_time = 0.4
     walking_time = 0.8
     global pwm
     global pwm_value
+    global pwm_b
+    global pwm_b_value
 
     if key_press.lower() == 'z':
         init()
@@ -111,11 +125,22 @@ def key_input(key_press):
         pwm_value -= 5
         change_duty(pwm, pwm_value)
     elif key_press.lower() == 'k':
+        active_servo()
         pwm_value += 5
         change_duty(pwm,pwm_value)
+    elif key_press.lower() == 'j':
+        active_servo()
+        pwm_b_value -= 5
+        change_duty(pwm_b, pwm_b_value)
+    elif key_press.lower() == 'l':
+        active_servo()
+        pwm_b_value += 5
+        change_duty(pwm_b,pwm_b_value)
+    #exit
     elif key_press.lower() == 'p':
         gpio.cleanup()
         pwm.stop()
+        pwm_b.stop()
         sys.exit(0);
 print "-------------------------------------------------------------------------------------------------------------------"
 print "car : z - forward | s - reverse | q - turn left | d - turn right | a - turn left | e - pivot right | i - pivot left"
