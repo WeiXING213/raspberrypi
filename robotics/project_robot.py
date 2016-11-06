@@ -92,6 +92,7 @@ def change_duty(pwm, angle):
     print ("angle = %s, duty cycle = %s"%(angle, duty))
     """ pwm.ChangeDutyCycle(duty) """
     pwm.ChangeDutyCycle(duty)
+    pwm.stop()    
 
 def key_input(key_press):
     sleep_time = 0.4
