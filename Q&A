@@ -8,4 +8,12 @@ pi@raspberrypi ~ $ /usr/bin/raspistill  -o cam2.jpg
 pi@raspberrypi ~ $ sudo /etc/init.d/motion start
 [ ok ] Starting motion detection daemon: motion.
 
-2, 
+2, copy raspberry via my mac
+pi@raspberrypi:~ $ scp image.jpg weixing@192.168.0.12:/Users/weixing/Downloads
+
+3, Git command
+git status
+git pull
+git commit -m "commentaire" project_robot.py 
+git push
+
