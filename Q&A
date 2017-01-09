@@ -1,0 +1,11 @@
+1, What causes ENOSPC error when using the Raspberry Pi camera module?
+
+I use motion on pi, if I want to run raspistill, I have to stop motion(which also using the camera to detect movement).
+
+pi@raspberrypi ~ $ sudo /etc/init.d/motion stop
+[ ok ] Stopping motion detection daemon: motion.
+pi@raspberrypi ~ $ /usr/bin/raspistill  -o cam2.jpg
+pi@raspberrypi ~ $ sudo /etc/init.d/motion start
+[ ok ] Starting motion detection daemon: motion.
+
+2, 
