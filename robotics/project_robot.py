@@ -2,6 +2,10 @@ import RPi.GPIO as gpio
 import time
 import sys
 import readchar
+import blescan
+import sys
+import bluetooth._bluetooth as bluez
+from math import *
 
 pwm_value = 90
 pwm = 0
@@ -30,7 +34,8 @@ def active_servo():
     gpio.setmode(gpio.BOARD)
     gpio.setup(12, gpio.OUT)
     gpio.setup(16, gpio.OUT)
- 
+    
+
 def init():
     gpio.setmode(gpio.BOARD)
     gpio.setup(7, gpio.OUT)
@@ -92,7 +97,21 @@ def change_duty(pwm, angle):
     print ("angle = %s, duty cycle = %s"%(angle, duty))
     """ pwm.ChangeDutyCycle(duty) """
     pwm.ChangeDutyCycle(duty)
-    pwm.stop()    
+
+def calculateDistance(rssi):
+
+    txPower = -59
+
+    if (rssi == 0):
+        return -1.0
+
+    ratio = rssi * 1.0 / txPower
+    if (ratio < 1.0):
+        return pow(ratio,10)
+
+    else:
+        distance =  (0.89976)*pow(ratio,7.7095) + 0.111;
+        return distance;       
 
 def key_input(key_press):
     sleep_time = 0.4
@@ -126,15 +145,12 @@ def key_input(key_press):
         pwm_value -= 5
         change_duty(pwm, pwm_value)
     elif key_press.lower() == 'k':
-        active_servo()
         pwm_value += 5
         change_duty(pwm,pwm_value)
     elif key_press.lower() == 'j':
-        active_servo()
         pwm_b_value -= 5
         change_duty(pwm_b, pwm_b_value)
     elif key_press.lower() == 'l':
-        active_servo()
         pwm_b_value += 5
         change_duty(pwm_b,pwm_b_value)
     #exit
@@ -150,8 +166,36 @@ print "\np - exit"
 print "-------------------------------------------------------------------------------------------------------------------"
 
 init_servo()
+#while True:
+#    key_input(readchar.readkey())
+
+dev_id = 0
+try:
+        sock = bluez.hci_open_dev(dev_id)
+        print "ble thread started"
+
+except:
+        print "error accessing bluetooth device..."
+        sys.exit(1)
+
+blescan.hci_le_set_scan_parameters(sock)
+blescan.hci_enable_le_scan(sock)
+
+a = 0
 while True:
-    key_input(readchar.readkey())
+    returnedList = blescan.parse_events(sock, 10)
+    for beacon in returnedList:
+        items =  beacon.split(',')
+
+        for i in range(9):
+            a =( a + calculateDistance(float(items[5])) )/2
+        print a
+        if a > 1:
+            init()
+            forward(0.2)
+            print "run forward"
+        a = 0
+        
 
 """
 video streaming 
