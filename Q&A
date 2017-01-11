@@ -17,3 +17,4 @@ git pull
 git commit -m "commentaire" project_robot.py 
 git push
 
+3, 碱性电池和普通干电池每节是1.5伏特，串联是3伏特，充电电池一般每节是1.2伏特，电流大小看你的负载??
